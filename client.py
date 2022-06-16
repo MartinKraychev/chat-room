@@ -4,6 +4,11 @@ import threading
 
 
 def receive():
+    """
+    Receive thread.
+    Try to receive a message and if a error occurs, close the socket.
+    The first message from the server should always be the nickname code word and we return our nickname as response.
+    """
     while True:
         try:
             message = client.recv(1024).decode(config['encoding_type'])
@@ -18,6 +23,10 @@ def receive():
 
 
 def send():
+    """
+    Send thread.
+    Try to send a message and if a error occurs, close the socket.
+    """
     while True:
         message = input()
         try:
@@ -30,6 +39,7 @@ def send():
 
 
 if __name__ == '__main__':
+    # On start loads  constants from the config file and makes the initial socket setup
     with open('config.json', 'r') as f:
         config = json.load(f)
 
@@ -38,6 +48,7 @@ if __name__ == '__main__':
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((config['host'], config['port']))
 
+    # Defines 2 threads - one for sending and one for listening.
     receive_thread = threading.Thread(target=receive)
     receive_thread.start()
 
